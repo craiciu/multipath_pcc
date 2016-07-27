@@ -6,7 +6,7 @@
 
 #define MAX_FLOWS 10
 #define MAX_SUBFLOWS 10
-#define K 10
+#define K 50
 #define L 10
 
 typedef struct subflow;
@@ -82,7 +82,7 @@ double utility(flow* f){
 
 void run_cc(flow* f){
   int i,j;
-  double delta = 3,epsilon = 0.05;
+  double delta = 5,epsilon = 0.1;
 
   if(f->probing){
     if (f->phase>0){

@@ -6,7 +6,7 @@
 
 #define MAX_FLOWS 10
 #define MAX_SUBFLOWS 10
-#define K 50
+#define K 100
 #define L 10
 
 typedef struct subflow;
@@ -116,6 +116,8 @@ void run_cc(flow* f){
 	  //adapt the rate
 	  if (f->subs[j].rate + epsilon * f->x[0][j]>0)
 	    f->subs[j].rate += epsilon * f->x[0][j];
+	  else
+	    f->subs[j].rate = 1;
 	}
 
 	f->probing = 0;
@@ -146,6 +148,7 @@ void run_cc(flow* f){
       if (f->subs[i].rate > -delta * f->v[f->phase][i]){
 	f->subs[i].rate = f->subs[i].rate + delta * f->v[f->phase][i];    
       }
+      else f->subs[i].rate = 1;
     }
 
 

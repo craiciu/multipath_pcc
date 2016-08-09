@@ -6,8 +6,8 @@
 
 #define MAX_FLOWS 10
 #define MAX_SUBFLOWS 10
-#define K 100
-#define L 10
+#define K 10
+#define L 1
 
 typedef struct subflow;
 
@@ -71,9 +71,9 @@ double utility(flow* f){
   //  printf("U(");
 
   for (i = 0;i<f->subs_count;i++){
-    printf("%f,%f\t",f->subs[i].rate,f->subs[i].loss);
+    //printf("%f,%f\t",f->subs[i].rate,f->subs[i].loss);
     u1 += f->subs[i].rate;
-    u2 += f->subs[i].rate * (pow(1+f->subs[i].loss,2.5)-1);
+    u2 += f->subs[i].rate * (pow(1+f->subs[i].loss,5)-1);
   }
   //  printf(")=%f",u1-u2);
 
@@ -82,7 +82,7 @@ double utility(flow* f){
 
 void run_cc(flow* f){
   int i,j;
-  double delta = 5,epsilon = 0.1;
+  double delta = 10,epsilon = 0.05;
 
   if(f->probing){
     if (f->phase>0){
@@ -97,7 +97,6 @@ void run_cc(flow* f){
       
       //correct rate for last phase
 	f->subs[i].rate = f->t[i];
-	//f->subs[i].rate - delta * f->v[f->phase-1][i];
       }
       //printf(")\n");
 
@@ -114,14 +113,14 @@ void run_cc(flow* f){
 	  //printf("%f ",f->x[0][j]);
 
 	  //adapt the rate
-	  if (f->subs[j].rate + epsilon * f->x[0][j]>0)
+	  if (f->subs[j].rate + epsilon * f->x[0][j]>1)
 	    f->subs[j].rate += epsilon * f->x[0][j];
 	  else
 	    f->subs[j].rate = 1;
 	}
 
 	f->probing = 0;
-	f->phase = rand()%L;
+	f->phase = 0;//rand()%L;
 	return;
       }
     }
@@ -130,7 +129,7 @@ void run_cc(flow* f){
     double norm = 0;
 
     for (i = 0;i<f->subs_count;i++){
-      f->v[f->phase][i] = (double)rand()-INT_MAX/2;
+      f->v[f->phase][i] = (double)rand()-RAND_MAX/2;
       norm += f->v[f->phase][i]*f->v[f->phase][i];
     }
     norm = sqrt(norm);
@@ -161,7 +160,7 @@ void run_cc(flow* f){
       for (i=0;i<f->subs_count;i++)
 	f->t[i] = f->subs[i].rate;
       f->probing = 1;
-      f->phase = rand()%K;
+      f->phase = 0;//rand()%K;
     }
   }
 }
